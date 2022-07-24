@@ -23,17 +23,12 @@ pub use stm32f3xx_hal::{
 
 pub type LedArray = [Switch<gpioe::PEx<Output<PushPull>>, ActiveHigh>; 8];
 
-pub fn init() -> (Delay, LedArray) {
+pub fn init() -> () {
     let device_periphs = pac::Peripherals::take().unwrap();
     let mut reset_and_clock_control = device_periphs.RCC.constrain();
 
-    let core_periphs = cortex_m::Peripherals::take().unwrap();
-    let mut flash = device_periphs.FLASH.constrain();
-    let clocks = reset_and_clock_control.cfgr.freeze(&mut flash.acr);
-    let delay = Delay::new(core_periphs.SYST, clocks);
-
    // initialize user leds
-    let mut gpioa = device_periphs.GPIOE.split(&mut reset_and_clock_control.ahb);
+   let mut gpioa = device_periphs.GPIOE.split(&mut reset_and_clock_control.ahb);
     let leds = Leds::new(
         gpioa.pe8,
         gpioa.pe9,
@@ -47,23 +42,9 @@ pub fn init() -> (Delay, LedArray) {
         &mut gpioa.otyper,
     );
 
-    (delay, leds.into_array())
+   // leds.into_array()
 }
 
-fn using_hal() -> ! {
-    let (mut delay, mut leds): (Delay, LedArray) = init();
-    
-    let half_period = 1000_u16;
-    
-    loop {
-        leds[0].on().ok();
-        delay.delay_ms(half_period);
-    
-        leds[0].off().ok();
-        delay.delay_ms(half_period);
-    }
-
-}
 
 fn setup_gpio() -> (){
     const RCC_AHBENR_ADDR: *mut u32 = (0x4002_1000 + 0x14) as *mut u32;
@@ -116,12 +97,11 @@ fn short_delay(delay_ms :u16){
 
 fn blink_forever() -> !{
     
-
-    let (mut delay, _): (Delay, LedArray) = aux5::init();
+    init();
 
     let half_period_ms = 100_u16;
 
-    //   setup_gpio();
+  //  setup_gpio();
 
     loop {
         set_led_on();
@@ -137,4 +117,5 @@ fn blink_forever() -> !{
 #[entry]
 fn main() -> !{
     blink_forever();
+
 }
