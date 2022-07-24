@@ -114,7 +114,7 @@ fn short_delay(delay_ms :u16){
     }
 }
 
-fn not_using_hal() -> !{
+fn blink_forever() -> !{
     
 
     let (mut delay, _): (Delay, LedArray) = aux5::init();
@@ -126,10 +126,9 @@ fn not_using_hal() -> !{
     loop {
         set_led_on();
         short_delay(half_period_ms);
-        //delay.delay_ms(half_period);
+
         set_led_off();
         short_delay(half_period_ms);
-        //delay.delay_ms(half_period);
     
     }
 }
@@ -137,7 +136,5 @@ fn not_using_hal() -> !{
 
 #[entry]
 fn main() -> !{
-    //using_hal();
-    not_using_hal();
-
+    blink_forever();
 }
