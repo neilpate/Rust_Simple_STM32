@@ -32,19 +32,19 @@ pub fn init() -> (Delay, LedArray) {
     let clocks = reset_and_clock_control.cfgr.freeze(&mut flash.acr);
     let delay = Delay::new(core_periphs.SYST, clocks);
 
-    // initialize user leds
-    let mut gpioe = device_periphs.GPIOE.split(&mut reset_and_clock_control.ahb);
+   // initialize user leds
+    let mut gpioa = device_periphs.GPIOE.split(&mut reset_and_clock_control.ahb);
     let leds = Leds::new(
-        gpioe.pe8,
-        gpioe.pe9,
-        gpioe.pe10,
-        gpioe.pe11,
-        gpioe.pe12,
-        gpioe.pe13,
-        gpioe.pe14,
-        gpioe.pe15,
-        &mut gpioe.moder,
-        &mut gpioe.otyper,
+        gpioa.pe8,
+        gpioa.pe9,
+        gpioa.pe10,
+        gpioa.pe11,
+        gpioa.pe12,
+        gpioa.pe13,
+        gpioa.pe14,
+        gpioa.pe15,
+        &mut gpioa.moder,
+        &mut gpioa.otyper,
     );
 
     (delay, leds.into_array())
@@ -68,19 +68,25 @@ fn using_hal() -> ! {
 fn setup_gpio() -> (){
     const RCC_AHBENR_ADDR: *mut u32 = (0x4002_1000 + 0x14) as *mut u32;
     
-    const GPIOE_ADDR: *mut u32 = 0x4800_1000 as *mut u32;
+    //GPIOE_MODER
+    //Port mode register 0x00
+    const GPIOE_MODER: *mut u32 = (0x4800_1000 + 0x00) as *mut u32;
+    
+    //GPIOE_OTYPER 0x04
+    //Port output type register
+    const GPIOE_OTYPER: *mut u32 = (0x4800_1000 + 0x04) as *mut u32;
 
     unsafe{
         let rcc_value = read_volatile(RCC_AHBENR_ADDR);
         write_volatile(RCC_AHBENR_ADDR, rcc_value | 0x2000);   //Set IOPEEN
 
-        //GPIO_MODER
-        //Port mode register 0x00
         //North LED is PE9 
-        write_volatile(GPIOE_ADDR, read_volatile(GPIOE_ADDR) | 0x080000);    //Set Pin 9 as output
-    
-        //GPIO_OTYPR 0x04
-        //Port output type register
+        let moder = read_volatile(GPIOE_MODER);
+        write_volatile(GPIOE_MODER, moder & (1 << 9) );    //Set Pin 9 as push-pull output
+        
+        let otyper = read_volatile(GPIOE_OTYPER);
+        write_volatile(GPIOE_OTYPER, otyper & (0x0000) );    //Set Pin 9 as push-pull output
+                                                                           //This is actually the reset state so not strictly necessary
     
     }
 }
@@ -102,18 +108,28 @@ fn set_led_off() ->() {
 
 }
 
+fn short_delay(delay_ms :u16){
+    for i in 0..(delay_ms* 50) {
+
+    }
+}
+
 fn not_using_hal() -> !{
     
-    let half_period = 100_u16;
-    let (mut delay, _ ): (Delay, LedArray) = init();
-    
-    //setup_gpio();
+
+    let (mut delay, _): (Delay, LedArray) = aux5::init();
+
+    let half_period_ms = 100_u16;
+
+    //   setup_gpio();
 
     loop {
         set_led_on();
-        delay.delay_ms(half_period);
+        short_delay(half_period_ms);
+        //delay.delay_ms(half_period);
         set_led_off();
-        delay.delay_ms(half_period);
+        short_delay(half_period_ms);
+        //delay.delay_ms(half_period);
     
     }
 }
