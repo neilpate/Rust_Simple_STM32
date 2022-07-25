@@ -59,8 +59,8 @@ fn setup_gpio() -> (){
 
     unsafe{
         let rcc_value = read_volatile(RCC_AHBENR_ADDR);
-        write_volatile(RCC_AHBENR_ADDR, rcc_value | 0x2000);   //Set IOPEEN
-
+        write_volatile(RCC_AHBENR_ADDR, rcc_value | (1 << 21 ));   //Set IOPEEN
+      
         //North LED is PE9 
         let moder = read_volatile(GPIOE_MODER);
         write_volatile(GPIOE_MODER, moder & (1 << 9) );    //Set Pin 9 as push-pull output
