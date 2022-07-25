@@ -1,4 +1,9 @@
-# Simple Steps to get started
+# Simplest Steps to get started
+Just run from VSCode (no need to pre-start OpenOCD)
+![image](https://user-images.githubusercontent.com/7802334/180878631-a17a8889-f641-4066-9d69-58813f02e050.png)
+
+
+# Simple Manual Steps to get started
 
 1. `openocd`
 2. `cargo run` (from a second command prompt as the openocd blocks the first one)
