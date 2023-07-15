@@ -14,7 +14,7 @@
             "servertype": "openocd",
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "Cargo Build (debug)",
-            "runToMain": true,
+            // "runToEntryPoint": "main",
             "executable": "./target/thumbv7em-none-eabihf/debug/simple1",
             /* Run `cargo build --example itm` and uncomment this line to run itm example */
             // "executable": "./target/thumbv7em-none-eabihf/debug/examples/itm",
