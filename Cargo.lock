@@ -444,6 +444,7 @@ dependencies = [
  "cortex-m-rt",
  "panic-itm",
  "stm32f3-discovery",
+ "volatile-register",
 ]
 
 [[package]]
