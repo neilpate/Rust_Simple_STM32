@@ -51,11 +51,11 @@ fn set_led_off(pin: i32) -> () {
 }
 
 fn short_delay(delay_ms: u16) {
-    for _ in 0..(delay_ms * 50) {}
+    for _ in 0..(delay_ms * 67) {} // Constant experimentally determined
 }
 
 fn blink_forever(pin: i32) -> ! {
-    let half_period_ms = 250_u16;
+    let half_period_ms = 10_u16;
 
     loop {
         set_led_on(pin);
